@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 # Create your views here.
-def home (request):
+def register (request):
     data = {
-        "message": "Cases server Running..."
+        "message": "Users server Running..."
     }
     return JsonResponse(data)
