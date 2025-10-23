@@ -172,7 +172,7 @@ const CreateCase = () => {
                                 htmlFor="user"
                                 className="block text-gray-700 font-medium mb-1"
                             >
-                                Reporter ID
+                                Agent ID
                             </label>
                             <input
                                 disabled
@@ -218,7 +218,7 @@ const CreateCase = () => {
                         href="/cases"
                         className="text-emerald-500 font-medium hover:underline"
                     >
-                        ← Back to All Cases
+                        ← Back to Cases
                     </a>
                 </p>
             </div>

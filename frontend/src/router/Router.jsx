@@ -4,8 +4,9 @@ import Home from "../pages/common/Home";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
 import PublicRoute from "./PublicRoute";
-import PrivateRoute from "./PrivateRoute"; // ✅ import
+import PrivateRoute from "./PrivateRoute";
 import CreateCase from "../pages/case/CreateCase";
+import Cases from "../pages/case/Cases";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,10 @@ const router = createBrowserRouter([
       // ✅ Private route (only logged-in users)
       {
         element: <PrivateRoute />,
-        children: [{ path: "new-case", element: <CreateCase /> }],
+        children: [
+          { path: "cases", element: <Cases /> },
+          { path: "new-case", element: <CreateCase /> }
+        ],
       },
 
       // ✅ Public routes (only for guests)
