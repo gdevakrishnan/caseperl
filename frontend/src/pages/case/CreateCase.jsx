@@ -212,15 +212,6 @@ const CreateCase = () => {
                         Submit Cyber Case
                     </button>
                 </div>
-
-                <p className="mt-4 text-center text-gray-700">
-                    <a
-                        href="/cases"
-                        className="text-emerald-500 font-medium hover:underline"
-                    >
-                        ← Back to Cases
-                    </a>
-                </p>
             </div>
         </div>
     );

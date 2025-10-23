@@ -9,7 +9,10 @@ const BASE_URL = "http://127.0.0.1:8000/api/case";
 export const getAllCases = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/`, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + getAccessToken()
+      },
     });
     return response;
   } catch (error) {
@@ -27,20 +30,20 @@ export const getAllCases = async () => {
 export const createCase = async (caseData) => {
   try {
     const response = await axios.post(`${BASE_URL}/`, caseData, {
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + getAccessToken()
-    },
+      },
     });
     return response;
   } catch (error) {
     console.error("Create case API error:", error);
     throw new Error(
       error.response?.data?.title?.[0] ||
-        error.response?.data?.description?.[0] ||
-        error.response?.data?.user?.[0] ||
-        error.response?.data?.error ||
-        "Failed to create case"
+      error.response?.data?.description?.[0] ||
+      error.response?.data?.user?.[0] ||
+      error.response?.data?.error ||
+      "Failed to create case"
     );
   }
 };
@@ -51,8 +54,11 @@ export const createCase = async (caseData) => {
  */
 export const getCasesByUser = async (userId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/${userId}/`, {
-      headers: { "Content-Type": "application/json" },
+    const response = await axios.get(`${BASE_URL}/user/${userId}/`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + getAccessToken()
+      },
     });
     return response;
   } catch (error) {
@@ -75,7 +81,10 @@ export const updateCase = async (caseId, userId, caseData) => {
       `${BASE_URL}/update/${caseId}/${userId}/`,
       caseData,
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + getAccessToken()
+        },
       }
     );
     return response;
@@ -83,9 +92,9 @@ export const updateCase = async (caseId, userId, caseData) => {
     console.error("Update case API error:", error);
     throw new Error(
       error.response?.data?.title?.[0] ||
-        error.response?.data?.description?.[0] ||
-        error.response?.data?.error ||
-        "Failed to update case"
+      error.response?.data?.description?.[0] ||
+      error.response?.data?.error ||
+      "Failed to update case"
     );
   }
 };
@@ -101,7 +110,10 @@ export const updateCaseStatus = async (caseId, statusIndex) => {
       `${BASE_URL}/status/${caseId}/${statusIndex}/`,
       {},
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + getAccessToken()
+        },
       }
     );
     return response;
@@ -119,8 +131,11 @@ export const updateCaseStatus = async (caseId, statusIndex) => {
  */
 export const deleteCase = async (caseId) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/${caseId}/`, {
-      headers: { "Content-Type": "application/json" },
+    const response = await axios.delete(`${BASE_URL}/delete/${caseId}/`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + getAccessToken()
+      },
     });
     return response;
   } catch (error) {
