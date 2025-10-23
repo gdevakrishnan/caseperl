@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../../context/AppContext";
+import { createCase } from "../../serviceWorkers/caseServices";
 
 const CreateCase = () => {
     const { user } = useContext(AppContext);
@@ -51,12 +52,25 @@ const CreateCase = () => {
         if (validateForm()) {
             const caseData = {
                 ...formData,
-                user: parseInt(formData.user),
                 due_date: new Date(formData.due_date).toISOString(),
             };
 
             console.log("Case Data:", caseData);
-            alert("Cyber case created successfully!");
+            createCase(formData)
+                .then(response => {
+                    if (response.status == 200 || response.status == 201) {
+                        alert("Case filed successfully");
+                        setFormData({
+                            title: "",
+                            description: "",
+                            status: "new",
+                            priority: "medium",
+                            user: user.id,
+                            due_date: "",
+                        });
+                    }
+                })
+                .catch(e => console.log(e.message));
         }
     };
 
