@@ -1,11 +1,13 @@
-import React from 'react'
+import React from 'react';
 
 const Footer = () => {
   return (
-    <div>
-      <h1>Footer</h1>
-    </div>
-  )
-}
+    <footer className="bg-gray-900 text-gray-400 py-4 text-center">
+      <p>
+        © {new Date().getFullYear()} CasePerl. All rights reserved by BlackPerl Company.
+      </p>
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;
