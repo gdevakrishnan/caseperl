@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { register } from '../../serviceWorkers/authServices';
 
 const Register = () => {
+  const nav = useNavigate();
   const [formData, setFormData] = useState({
     uname: '',
     password1: '',
@@ -28,9 +30,15 @@ const Register = () => {
 
     console.log('Form submitted:', formData);
 
-    setFormData({ uname: '', password1: '', password2: '' });
-
-    alert('Registration successful! (Check console for submitted data)');
+    register({ uname: formData.uname, password: formData.password1 })
+      .then(response => {
+        if (response.status == 201 || response.status == 200) {
+          alert("Registered successfully");
+          setFormData({ uname: '', password1: '', password2: '' });
+          nav('/login');
+        }
+      })
+      .catch(e => console.log(e.message));
   };
 
 

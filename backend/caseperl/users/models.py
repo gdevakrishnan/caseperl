@@ -22,7 +22,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     uname = models.CharField(max_length=150, unique=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='agent')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

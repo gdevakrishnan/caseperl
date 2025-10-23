@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../../serviceWorkers/authServices';
 
 const Login = () => {
+  const nav = useNavigate();
   const [formData, setFormData] = useState({
     uname: '',
     password: ''
@@ -22,9 +24,17 @@ const Login = () => {
 
     console.log('Login submitted:', formData);
 
-    setFormData({ uname: '', password: '' });
+    login(formData)
+      .then(response => {
+        console.log(response)
+        if (response.status == 201 || response.status == 200) {
+          alert("Login successfull");
+          setFormData({ uname: '', password: '' });
+          nav('/');
+        }
+      })
+      .catch(e => console.log(e.message));
 
-    alert('Login successful! (Check console for submitted data)');
   };
 
   return (
