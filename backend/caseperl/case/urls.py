@@ -1,6 +1,16 @@
 from django.urls import path
-from . import views
+from .views import (
+    CaseListCreateView,
+    UserCasesView,
+    CaseUpdateView,
+    CaseUpdateStatusView,
+    CaseDeleteView
+)
 
 urlpatterns = [
-    path('', views.home, name='home')
+    path('', CaseListCreateView.as_view(), name='case-list-create'),  # GET all / POST new
+    path('<int:user_id>/', UserCasesView.as_view(), name='user-cases'),  # GET by user
+    path('update/<int:id>/<int:user_id>/', CaseUpdateView.as_view(), name='case-update'),  # PUT update by user
+    path('status/<int:id>/<int:idx_status>/', CaseUpdateStatusView.as_view(), name='case-update-status'),  # PUT update status
+    path('<int:id>/', CaseDeleteView.as_view(), name='case-delete'),  # DELETE by id
 ]
