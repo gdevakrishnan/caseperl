@@ -1,12 +1,9 @@
 import React from 'react'
+import AppRouter from './router/Router'
 
 const App = () => {
   return (
-    <div>
-      <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </div>
+    <AppRouter />
   )
 }
 
