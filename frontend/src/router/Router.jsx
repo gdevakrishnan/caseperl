@@ -3,7 +3,9 @@ import RootLayout from "../pages/common/RootLayout";
 import Home from "../pages/common/Home";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
-import PublicRoute from "./PublicRoute"; // ✅ import the wrapper
+import PublicRoute from "./PublicRoute";
+import PrivateRoute from "./PrivateRoute"; // ✅ import
+import CreateCase from "../pages/case/CreateCase";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +14,13 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
 
-      // ✅ Wrap public routes under PublicRoute
+      // ✅ Private route (only logged-in users)
+      {
+        element: <PrivateRoute />,
+        children: [{ path: "new-case", element: <CreateCase /> }],
+      },
+
+      // ✅ Public routes (only for guests)
       {
         element: <PublicRoute />,
         children: [

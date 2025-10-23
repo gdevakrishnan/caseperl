@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut, Home, UserPlus, LogIn } from 'lucide-react';
+import { Menu, X, FileText, LogOut, Home, UserPlus, LogIn } from 'lucide-react';
 import AppContext from '../context/AppContext';
 import { logout } from '../serviceWorkers/authServices';
 
@@ -19,7 +19,7 @@ const Navbar = () => {
 
     const authenticatedLinks = [
         { label: "Home", to: "/", icon: Home },
-        { label: "Dashboard", to: "/dashboard", icon: User },
+        { label: "New Case", to: "/new-case", icon: FileText },
     ];
 
     const links = user ? authenticatedLinks : publicLinks;
