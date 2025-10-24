@@ -5,20 +5,17 @@ import AppContext from '../../context/AppContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useContext(AppContext);
+  const { setUser, setError, setMessage } = useContext(AppContext);
   
   const [formData, setFormData] = useState({
     uname: '',
     password: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Clear error when user starts typing
-    if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -27,7 +24,7 @@ const Login = () => {
 
     // Validation
     if (!formData.uname.trim() || !formData.password) {
-      setError('Please fill in all fields.');
+      setError('Please fill all fields.');
       return;
     }
 
@@ -35,11 +32,12 @@ const Login = () => {
 
     try {
       const response = await login(formData);
-      console.log('Login response:', response);
 
       if (response.status === 200 || response.status === 201) {
         // Set user in context - this will automatically update the navbar
         setUser(response.data.user);
+
+        setMessage("Login successfull");
         
         // Clear form
         setFormData({ uname: '', password: '' });
@@ -49,6 +47,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
+      setError("Failed to login");
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
@@ -61,13 +60,6 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Login
         </h2>
-
-        {/* Error message */}
-        {error && (
-          <div className="mb-4 p-3 rounded-md bg-red-100 border border-red-400 text-red-700">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
