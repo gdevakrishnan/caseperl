@@ -1,0 +1,37 @@
+FROM python:3.12-slim
+
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment and install Python dependencies
+COPY requirements.txt .
+RUN python -m venv /opt/venv && \
+    pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt
+
+# Copy project files
+COPY . .
+
+# Install development tools
+RUN pip install debugpy
+
+# Expose port for Django development server
+EXPOSE 8000
+
+# Run Django development server from CasePerl directory
+CMD ["sh", "-c", "cd CasePerl && python manage.py runserver 0.0.0.0:8000"]

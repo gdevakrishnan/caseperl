@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAccessToken } from "./authServices";
 
-const BASE_URL = "http://127.0.0.1:8000/api/case";
+const BASE_URL = "http://localhost:8000/api/case";
 
 /**
  * Get all cases

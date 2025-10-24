@@ -54,7 +54,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:3000"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -99,12 +100,12 @@ WSGI_APPLICATION = 'caseperl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', cast=int),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME', default='mydb'),
+        'USER': config('DB_USER', default='myuser'),
+        'PASSWORD': config('DB_PASSWORD', default='mypassword'),
+        'HOST': config('DB_HOST', default='db'),
+        'PORT': config('DB_PORT', cast=int, default=3306),
     }
 }
 
