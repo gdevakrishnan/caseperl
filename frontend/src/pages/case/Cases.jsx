@@ -573,7 +573,8 @@ const Cases = () => {
 
   const handleUpdate = async (caseId, formData) => {
     try {
-      await updateCase(caseId, id, formData);
+      // Use the case's user ID, not the logged-in user's ID
+      await updateCase(caseId, editingCase.user, formData);
 
       setCases((prev) =>
         prev.map((c) => (c.id === caseId ? { ...c, ...formData } : c))
@@ -607,7 +608,6 @@ const Cases = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-emerald-600 border-t-transparent"></div>
-          <p className="mt-4 text-gray-700 font-semibold text-lg">Loading cases...</p>
         </div>
       </div>
     );

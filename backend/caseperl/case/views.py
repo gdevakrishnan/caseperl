@@ -26,7 +26,14 @@ class UserCasesView(APIView):
 
 class CaseUpdateView(APIView):
     def put(self, request, id, user_id):
-        case = get_object_or_404(Case, id=id, user_id=user_id, is_deleted=False)
+        case = get_object_or_404(Case, id=id, is_deleted=False)
+        
+        if case.user_id != user_id:
+            return Response(
+                {"error": "You don't have permission to update this case"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
         serializer = CaseSerializer(case, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
