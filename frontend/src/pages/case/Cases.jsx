@@ -71,7 +71,7 @@ const EditCaseModal = ({ caseData, onClose, onUpdate }) => {
     user: caseData.user
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useContext(AppContext);
+  const { user, setError } = useContext(AppContext);
   const { role } = user;
 
   const handleChange = (e) => {
@@ -87,6 +87,7 @@ const EditCaseModal = ({ caseData, onClose, onUpdate }) => {
       onClose();
     } catch (error) {
       console.error('Failed to update case:', error);
+      setError('Failed to update case');
     } finally {
       setIsSubmitting(false);
     }
@@ -446,7 +447,7 @@ const CaseCard = ({ caseData, isAdmin, onViewReport, onStatusChange, onDelete, o
               <Edit className="w-4 h-4" />
             </button>
             <button
-              onClick={() => onDelete(caseData.id)}
+              onClick={() => onDelete(caseData)}
               className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
               title="Delete case"
             >
@@ -500,19 +501,84 @@ const CaseCard = ({ caseData, isAdmin, onViewReport, onStatusChange, onDelete, o
   );
 };
 
+// Delete Confirmation Modal
+const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, caseName, isDeleting }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+        <div className="p-6">
+          <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+            <Trash2 className="w-6 h-6 text-red-600" />
+          </div>
+          <p className="text-gray-600 text-center mb-6">
+            Are you sure you want to delete <span className="font-semibold text-gray-900">"{caseName}"</span>?
+          </p>
+
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              disabled={isDeleting}
+              className="flex-1 py-3 px-4 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={isDeleting}
+              className="flex-1 py-3 px-4 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors shadow-md hover:shadow-lg disabled:bg-red-400 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              {isDeleting ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Main Cases Component
 const Cases = () => {
-  const { user } = useContext(AppContext);
+  const { user, setMessage, setError } = useContext(AppContext);
   const nav = useNavigate();
   const { id, role } = user;
 
   const [cases, setCases] = useState([]);
   const [filteredCases, setFilteredCases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [filters, setFilters] = useState({ status: '', priority: '' });
   const [selectedCase, setSelectedCase] = useState(null);
   const [editingCase, setEditingCase] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [caseToDelete, setCaseToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const isAdmin = role === 'admin';
 
@@ -526,7 +592,6 @@ const Cases = () => {
 
   const fetchCases = async () => {
     setLoading(true);
-    setError('');
     try {
       const response = isAdmin
         ? await getAllCases()
@@ -565,15 +630,15 @@ const Cases = () => {
       setCases((prev) =>
         prev.map((c) => (c.id === caseId ? { ...c, status: newStatus } : c))
       );
+
+      setMessage('Case status updated successfully');
     } catch (err) {
       setError(err.message || 'Failed to update case status');
-      setTimeout(() => setError(''), 3000);
     }
   };
 
   const handleUpdate = async (caseId, formData) => {
     try {
-      // Use the case's user ID, not the logged-in user's ID
       await updateCase(caseId, editingCase.user, formData);
 
       setCases((prev) =>
@@ -581,22 +646,30 @@ const Cases = () => {
       );
 
       setEditingCase(null);
+      setMessage('Case updated successfully');
     } catch (err) {
       setError(err.message || 'Failed to update case');
-      setTimeout(() => setError(''), 3000);
     }
   };
 
   const handleDelete = async (caseId) => {
-    if (!window.confirm('Are you sure you want to delete this case?')) return;
-
+    setIsDeleting(true);
     try {
       await deleteCase(caseId);
       setCases((prev) => prev.filter((c) => c.id !== caseId));
+      setMessage('Case deleted successfully');
+      setDeleteModalOpen(false);
+      setCaseToDelete(null);
     } catch (err) {
       setError(err.message || 'Failed to delete case');
-      setTimeout(() => setError(''), 3000);
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const openDeleteModal = (caseData) => {
+    setCaseToDelete(caseData);
+    setDeleteModalOpen(true);
   };
 
   const handleEdit = (caseData) => {
@@ -672,13 +745,6 @@ const Cases = () => {
         {/* Filters */}
         {isAdmin && <CaseFilters filters={filters} onFilterChange={handleFilterChange} />}
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700 font-medium">{error}</p>
-          </div>
-        )}
-
         {/* Cases Grid */}
         {filteredCases.length === 0 ? (
           <div className="bg-white p-12 rounded-xl shadow-sm border border-gray-200 text-center">
@@ -697,7 +763,7 @@ const Cases = () => {
                 isAdmin={isAdmin}
                 onViewReport={setSelectedCase}
                 onStatusChange={handleStatusChange}
-                onDelete={handleDelete}
+                onDelete={openDeleteModal}
                 onEdit={handleEdit}
               />
             ))}
@@ -718,6 +784,20 @@ const Cases = () => {
             caseData={editingCase}
             onClose={() => setEditingCase(null)}
             onUpdate={handleUpdate}
+          />
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteModalOpen && caseToDelete && (
+          <DeleteConfirmationModal
+            isOpen={deleteModalOpen}
+            onClose={() => {
+              setDeleteModalOpen(false);
+              setCaseToDelete(null);
+            }}
+            onConfirm={() => handleDelete(caseToDelete.id)}
+            caseName={caseToDelete.title}
+            isDeleting={isDeleting}
           />
         )}
       </div>
