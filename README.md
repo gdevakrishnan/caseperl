@@ -46,7 +46,6 @@ caseperl/
 │   │   └── Main.jsx
 │   └── Dockerfile
 ├── docker-compose.yml
-├── docker-compose.dev.yml
 └── README.md
 ```
 
@@ -223,8 +222,8 @@ DEBUG=True
 2. **Build and start containers**
 
    ```bash
-   docker-compose build
-   docker-compose up
+   docker-compose -f docker-compose.yml build
+   docker-compose -f docker-compose.yml up
    ```
 
 3. **Access the application**
@@ -235,7 +234,7 @@ DEBUG=True
 4. **Stop containers**
 
    ```bash
-   docker-compose down
+   docker-compose -f docker-compose.yml down
    ```
 
 ---
