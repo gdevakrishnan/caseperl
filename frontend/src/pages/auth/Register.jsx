@@ -32,7 +32,7 @@ const Register = () => {
 
     setLoading(true);
     register({ 
-      uname: formData.uname, 
+      uname: formData.uname.toLowerCase(), 
       password: formData.password1,
       role: formData.role 
     })
@@ -216,11 +216,6 @@ const Register = () => {
             </p>
           </div>
         </div>
-
-        {/* Footer Text */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          By registering, you agree to our Terms of Service and Privacy Policy
-        </p>
       </div>
     </div>
   );
