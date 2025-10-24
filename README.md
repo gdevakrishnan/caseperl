@@ -107,10 +107,6 @@ The **User** model extends Django’s authentication system with role-based acce
    * Agents can only view, create, or modify their own cases.
    * Admins can view and update all cases, including status transitions.
 
-3. **Soft Delete Implementation**
-   Instead of permanently removing records, `is_deleted` is set to `True`.
-   This keeps data available for audit purposes.
-
 ---
 
 ## Backend Overview
@@ -126,7 +122,7 @@ The backend is built using **Django REST Framework (DRF)** with modular architec
 | GET    | `/api/case/user/{user_id}/`           | Retrieve all cases for a specific user |
 | PUT    | `/api/case/update/{id}/{user_id}/`    | Update a case owned by a user          |
 | PUT    | `/api/case/status/{id}/{idx_status}/` | Update case status (admin only)        |
-| DELETE | `/api/case/delete/{id}/`              | Soft-delete a case by ID               |
+| DELETE | `/api/case/delete/{id}/`              | Delete a case by ID                    |
 
 ### Authentication API (`/api/auth/`)
 
@@ -280,7 +276,7 @@ npm run dev
 * REST API using Django REST Framework
 * JWT-based authentication and RBAC
 * Case priority, status management, and custom validations
-* Soft deletion and indexed queries
+* CRUD operations and indexed queries
 
 ### Frontend
 
