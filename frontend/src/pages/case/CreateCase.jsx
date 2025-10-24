@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../../context/AppContext";
 import { createCase } from "../../serviceWorkers/caseServices";
+import { Shield, AlertCircle, Calendar, User } from 'lucide-react';
 
 const CreateCase = () => {
     const { user } = useContext(AppContext);
@@ -75,143 +76,124 @@ const CreateCase = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
-            <div className="w-full max-w-2xl bg-white/30 backdrop-blur-md p-8 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                    Create New Cyber Case
-                </h2>
+        <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-50 py-12 px-4">
+            <div className="max-w-4xl mx-auto">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-2xl mb-4 shadow-lg">
+                        <Shield className="w-8 h-8 text-white" />
+                    </div>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                        Create Cyber Case
+                    </h1>
+                    <p className="text-gray-600">
+                        Document and track cybersecurity incidents
+                    </p>
+                </div>
 
-                <div className="space-y-4">
-                    {/* Title */}
-                    <div>
-                        <label
-                            htmlFor="title"
-                            className="block text-gray-700 font-medium mb-1"
-                        >
-                            Case Title <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="title"
-                            id="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            placeholder="e.g., Phishing Attack on Employee Email"
-                        />
+                {/* Form Card */}
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <div className="bg-linear-to-r from-emerald-500 to-teal-500 px-8 py-6">
+                        <h2 className="text-xl font-semibold text-white">
+                            Incident Details
+                        </h2>
+                        <p className="text-emerald-50 text-sm mt-1">
+                            Fill in the information below to create a new case
+                        </p>
                     </div>
 
-                    {/* Description */}
-                    <div>
-                        <label
-                            htmlFor="description"
-                            className="block text-gray-700 font-medium mb-1"
-                        >
-                            Incident Description <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                            name="description"
-                            id="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows="4"
-                            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            placeholder="Describe the cyber incident in detail — e.g., user received a suspicious email that led to credential compromise..."
-                        />
-                    </div>
-
-                    {/* Status + Priority */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-8 space-y-6">
+                        {/* Case Title */}
                         <div>
-                            <label
-                                htmlFor="status"
-                                className="block text-gray-700 font-medium mb-1"
-                            >
-                                Case Status
-                            </label>
-                            <select
-                                disabled  
-                                name="status"
-                                id="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            >
-                                <option value="new">New</option>
-                                <option value="in_progress">Under Investigation</option>
-                                <option value="resolved">Resolved</option>
-                                <option value="closed">Closed</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="priority"
-                                className="block text-gray-700 font-medium mb-1"
-                            >
-                                Threat Severity
-                            </label>
-                            <select
-                                name="priority"
-                                id="priority"
-                                value={formData.priority}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="critical">Critical</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* User ID + Due Date */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label
-                                htmlFor="user"
-                                className="block text-gray-700 font-medium mb-1"
-                            >
-                                Agent ID
+                            <label htmlFor="title" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                                <AlertCircle className="w-4 h-4 mr-2 text-emerald-500" />
+                                Case Title
+                                <span className="text-red-500 ml-1">*</span>
                             </label>
                             <input
-                                disabled
-                                type="number"
-                                name="user"
-                                id="user"
-                                value={formData.user}
+                                type="text"
+                                name="title"
+                                id="title"
+                                value={formData.title}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                placeholder="Enter your User ID (e.g., 102)"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors placeholder:text-gray-400"
+                                placeholder="e.g., Phishing Attack on Employee Email"
                             />
                         </div>
 
+                        {/* Description */}
                         <div>
-                            <label
-                                htmlFor="due_date"
-                                className="block text-gray-700 font-medium mb-1"
-                            >
-                                Expected Resolution Date <span className="text-red-500">*</span>
+                            <label htmlFor="description" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                                Incident Description
+                                <span className="text-red-500 ml-1">*</span>
                             </label>
-                            <input
-                                type="date"
-                                name="due_date"
-                                id="due_date"
-                                value={formData.due_date}
+                            <textarea
+                                name="description"
+                                id="description"
+                                value={formData.description}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                rows="5"
+                                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors resize-none placeholder:text-gray-400"
+                                placeholder="Describe the cyber incident in detail — e.g., user received a suspicious email that led to credential compromise..."
                             />
                         </div>
-                    </div>
 
-                    {/* Submit Button */}
-                    <button
-                        onClick={handleSubmit}
-                        className="w-full py-2 px-4 rounded-md bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors"
-                    >
-                        Submit Cyber Case
-                    </button>
+                        {/* Status + Priority Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Priority */}
+                            <div>
+                                <label htmlFor="priority" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                                    Threat Severity
+                                </label>
+                                <div className="relative">
+                                    <select
+                                        name="priority"
+                                        id="priority"
+                                        value={formData.priority}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-gray-50 cursor-not-allowed text-gray-600 placeholder:text-gray-400"
+                                    >
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="critical">Critical</option>
+                                    </select>
+
+                                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* Due date */}
+                            <div>
+                                <label htmlFor="due_date" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                                    <Calendar className="w-4 h-4 mr-2 text-emerald-500" />
+                                    Expected Resolution Date
+                                    <span className="text-red-500 ml-1">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    name="due_date"
+                                    id="due_date"
+                                    value={formData.due_date}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="pt-4">
+                            <button
+                                onClick={handleSubmit}
+                                className="w-full py-4 px-6 rounded-xl bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            >
+                                <Shield className="w-5 h-5" />
+                                Submit Cyber Case
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
