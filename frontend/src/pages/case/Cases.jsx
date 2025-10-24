@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import AppContext from '../../context/AppContext';
+import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   getAllCases,
   getCasesByUser,
@@ -91,15 +93,14 @@ const CaseReportModal = ({ caseData, onClose }) => {
             <div>
               <label className="text-gray-600 font-medium">Status</label>
               <p className="text-gray-800 capitalize">
-                <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                  caseData.status === 'resolved' || caseData.status === 'closed'
+                <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${caseData.status === 'resolved' || caseData.status === 'closed'
                     ? 'bg-green-100 text-green-800'
                     : caseData.status === 'in_progress'
-                    ? 'bg-blue-100 text-blue-800'
-                    : caseData.status === 'new'
-                    ? 'bg-gray-100 text-gray-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
+                      ? 'bg-blue-100 text-blue-800'
+                      : caseData.status === 'new'
+                        ? 'bg-gray-100 text-gray-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                  }`}>
                   {caseData.status.replace('_', ' ')}
                 </span>
               </p>
@@ -108,13 +109,12 @@ const CaseReportModal = ({ caseData, onClose }) => {
             <div>
               <label className="text-gray-600 font-medium">Priority</label>
               <p className="text-gray-800">
-                <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                  caseData.priority === 'high'
+                <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${caseData.priority === 'high'
                     ? 'bg-red-100 text-red-800'
                     : caseData.priority === 'medium'
-                    ? 'bg-orange-100 text-orange-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
+                      ? 'bg-orange-100 text-orange-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
                   {caseData.priority.charAt(0).toUpperCase() + caseData.priority.slice(1)}
                 </span>
               </p>
@@ -196,13 +196,12 @@ const CaseCard = ({ caseData, isAdmin, onViewReport, onStatusChange, onDelete })
           </h3>
           <p className="text-gray-600 text-sm">Case #{caseData.id}</p>
         </div>
-        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-          caseData.priority === 'high'
+        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${caseData.priority === 'high'
             ? 'bg-red-100 text-red-800'
             : caseData.priority === 'medium'
-            ? 'bg-orange-100 text-orange-800'
-            : 'bg-gray-100 text-gray-800'
-        }`}>
+              ? 'bg-orange-100 text-orange-800'
+              : 'bg-gray-100 text-gray-800'
+          }`}>
           {getPriorityDisplay(caseData.priority)}
         </span>
       </div>
@@ -228,15 +227,14 @@ const CaseCard = ({ caseData, isAdmin, onViewReport, onStatusChange, onDelete })
             <option value="reopened">Reopened</option>
           </select>
         ) : (
-          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-            caseData.status === 'resolved' || caseData.status === 'closed'
+          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${caseData.status === 'resolved' || caseData.status === 'closed'
               ? 'bg-green-100 text-green-800'
               : caseData.status === 'in_progress'
-              ? 'bg-blue-100 text-blue-800'
-              : caseData.status === 'new'
-              ? 'bg-gray-100 text-gray-800'
-              : 'bg-yellow-100 text-yellow-800'
-          }`}>
+                ? 'bg-blue-100 text-blue-800'
+                : caseData.status === 'new'
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'bg-yellow-100 text-yellow-800'
+            }`}>
             {caseData.status.replace('_', ' ')}
           </span>
         )}
@@ -265,6 +263,7 @@ const CaseCard = ({ caseData, isAdmin, onViewReport, onStatusChange, onDelete })
 // Main Cases Component
 const Cases = () => {
   const { user } = useContext(AppContext);
+  const nav = useNavigate();
   const { id, role } = user;
 
   const [cases, setCases] = useState([]);
@@ -321,7 +320,7 @@ const Cases = () => {
     try {
       const statusIndex = STATUS_MAP[newStatus];
       await updateCaseStatus(caseId, statusIndex);
-      
+
       setCases((prev) =>
         prev.map((c) => (c.id === caseId ? { ...c, status: newStatus } : c))
       );
@@ -359,6 +358,16 @@ const Cases = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <div className="flex justify-end mb-6">
+        <button
+          onClick={() => nav('/new-case')}
+          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-md hover:bg-emerald-600 transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+          New Case
+        </button>
+      </div>
+
       <div className="max-w-7xl mx-auto">
         {isAdmin && <CaseFilters filters={filters} onFilterChange={handleFilterChange} />}
 
