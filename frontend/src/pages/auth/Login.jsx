@@ -45,10 +45,9 @@ const Login = () => {
         // Navigate to home page
         navigate('/');
       }
-    } catch (err) {
-      console.error('Login error:', err);
-      setError("Failed to login");
-      setError(err.message || 'Login failed. Please check your credentials.');
+    } catch (e) {
+      console.error(e.message);
+      setError(e.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
