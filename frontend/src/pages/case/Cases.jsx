@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, Fragment } from 'react';
 import AppContext from '../../context/AppContext';
 import { Plus, Filter, Eye, Trash2, Clock, AlertCircle, Edit, TrendingUp, FileText, CheckCircle2, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -12,14 +12,38 @@ import {
 } from '../../serviceWorkers/caseServices';
 
 // Filter Component
-const CaseFilters = ({ filters, onFilterChange }) => {
+const CaseFilters = ({ filters, onFilterChange, onClearFilters }) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Filter className="w-5 h-5 text-gray-700" />
-        <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Filter className="w-5 h-5 text-gray-700" />
+          <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+        </div>
+        <button
+          onClick={onClearFilters}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+        >
+          <X className="w-4 h-4" />
+          Clear Filters
+        </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Title Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Search by Title
+          </label>
+          <input
+            type="text"
+            value={filters.title}
+            onChange={(e) => onFilterChange('title', e.target.value)}
+            placeholder="Enter case title..."
+            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white text-gray-800 transition-all placeholder:text-gray-400"
+          />
+        </div>
+
+        {/* Status Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Status
@@ -39,6 +63,7 @@ const CaseFilters = ({ filters, onFilterChange }) => {
           </select>
         </div>
 
+        {/* Priority Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Priority
@@ -55,6 +80,83 @@ const CaseFilters = ({ filters, onFilterChange }) => {
           </select>
         </div>
       </div>
+    </div>
+  );
+};
+
+// Pagination component
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        pages.push(currentPage - 1);
+        pages.push(currentPage);
+        pages.push(currentPage + 1);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center justify-center gap-2 mt-8">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Previous
+      </button>
+
+      <div className="flex gap-2">
+        {getPageNumbers().map((page, index) => (
+          page === '...' ? (
+            <span key={`ellipsis-${index}`} className="px-4 py-2 text-gray-400">
+              ...
+            </span>
+          ) : (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === page
+                ? 'bg-emerald-600 text-white shadow-md'
+                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+              {page}
+            </button>
+          )
+        ))}
+      </div>
+
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Next
+      </button>
     </div>
   );
 };
@@ -491,7 +593,7 @@ const CaseCard = ({ caseData, isAdmin, onViewReport, onStatusChange, onDelete, o
 
         <button
           onClick={() => onViewReport(caseData)}
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-sm hover:shadow-md"
+          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-linear-to-r from-emerald-600 to-emerald-700 text-white font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-sm hover:shadow-md"
         >
           <Eye className="w-4 h-4" />
           View Full Report
@@ -573,12 +675,19 @@ const Cases = () => {
   const [cases, setCases] = useState([]);
   const [filteredCases, setFilteredCases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ status: '', priority: '' });
+  const [filters, setFilters] = useState({ title: '', status: '', priority: '' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(9);
   const [selectedCase, setSelectedCase] = useState(null);
   const [editingCase, setEditingCase] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [caseToDelete, setCaseToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const indexOfLastCase = currentPage * itemsPerPage;
+  const indexOfFirstCase = indexOfLastCase - itemsPerPage;
+  const currentCases = filteredCases.slice(indexOfFirstCase, indexOfLastCase);
+  const totalPages = Math.ceil(filteredCases.length / itemsPerPage);
 
   const isAdmin = role === 'admin';
 
@@ -615,7 +724,24 @@ const Cases = () => {
       filtered = filtered.filter((c) => c.priority === filters.priority);
     }
 
+    if (filters.title) {
+      filtered = filtered.filter((c) =>
+        c.title.toLowerCase().includes(filters.title.toLowerCase())
+      );
+    }
+
     setFilteredCases(filtered);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ status: '', priority: '', title: '' });
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFilterChange = (filterType, value) => {
@@ -743,7 +869,13 @@ const Cases = () => {
         </div>
 
         {/* Filters */}
-        {isAdmin && <CaseFilters filters={filters} onFilterChange={handleFilterChange} />}
+        {isAdmin && (
+          <CaseFilters
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onClearFilters={handleClearFilters}
+          />
+        )}
 
         {/* Cases Grid */}
         {filteredCases.length === 0 ? (
@@ -755,19 +887,32 @@ const Cases = () => {
             <p className="text-gray-500 text-sm mt-2">Try adjusting your filters or create a new case</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCases.map((caseData) => (
-              <CaseCard
-                key={caseData.id}
-                caseData={caseData}
-                isAdmin={isAdmin}
-                onViewReport={setSelectedCase}
-                onStatusChange={handleStatusChange}
-                onDelete={openDeleteModal}
-                onEdit={handleEdit}
-              />
-            ))}
-          </div>
+          <Fragment>
+            {filteredCases.length > 0 && (
+              <div className="mb-4 text-sm text-gray-600">
+                Showing {indexOfFirstCase + 1} to {Math.min(indexOfLastCase, filteredCases.length)} of {filteredCases.length} cases
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentCases.map((caseData) => (
+                <CaseCard
+                  key={caseData.id}
+                  caseData={caseData}
+                  isAdmin={isAdmin}
+                  onViewReport={setSelectedCase}
+                  onStatusChange={handleStatusChange}
+                  onDelete={openDeleteModal}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </Fragment>
         )}
 
         {/* View Report Modal */}

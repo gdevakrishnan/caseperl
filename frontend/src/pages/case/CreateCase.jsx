@@ -4,7 +4,7 @@ import { createCase } from "../../serviceWorkers/caseServices";
 import { Shield, AlertCircle, Calendar, User } from 'lucide-react';
 
 const CreateCase = () => {
-    const { user } = useContext(AppContext);
+    const { user, setMessage, setError } = useContext(AppContext);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -25,22 +25,22 @@ const CreateCase = () => {
 
     const validateForm = () => {
         if (!formData.title.trim()) {
-            alert("Please enter a case title");
+            setError("Please enter a case title");
             return false;
         }
 
         if (!formData.description.trim()) {
-            alert("Please provide a detailed description of the cyber incident");
+            setError("Please provide a detailed description of the cyber incident");
             return false;
         }
 
         if (!formData.user) {
-            alert("Please enter your User ID");
+            setError("Please enter your User ID");
             return false;
         }
 
         if (!formData.due_date) {
-            alert("Please select a due date for resolution");
+            setError("Please select a due date for resolution");
             return false;
         }
 
@@ -60,7 +60,7 @@ const CreateCase = () => {
             createCase(formData)
                 .then(response => {
                     if (response.status == 200 || response.status == 201) {
-                        alert("Case filed successfully");
+                        setMessage("Case filed successfully");
                         setFormData({
                             title: "",
                             description: "",
@@ -71,7 +71,10 @@ const CreateCase = () => {
                         });
                     }
                 })
-                .catch(e => console.log(e.message));
+                .catch((e) => {
+                    setError(e.message);
+                    console.log(e.message);
+                })
         }
     };
 
@@ -151,12 +154,11 @@ const CreateCase = () => {
                                         id="priority"
                                         value={formData.priority}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-gray-50 cursor-not-allowed text-gray-600 placeholder:text-gray-400"
+                                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-500 focus:outline-none transition-colors bg-gray-50 text-gray-600 placeholder:text-gray-400"
                                     >
                                         <option value="low">Low</option>
                                         <option value="medium">Medium</option>
                                         <option value="high">High</option>
-                                        <option value="critical">Critical</option>
                                     </select>
 
                                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
