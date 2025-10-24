@@ -5,6 +5,7 @@ import AppContext from '../../context/AppContext';
 
 const Register = () => {
   const nav = useNavigate();
+  const { setMessage, setError } = useContext(AppContext);
   const [formData, setFormData] = useState({
     uname: '',
     password1: '',
@@ -20,12 +21,12 @@ const Register = () => {
     e.preventDefault();
 
     if (!formData.uname.trim() || !formData.password1 || !formData.password2) {
-      alert('Please fill in all fields.');
+      setError('Please fill in all fields.');
       return;
     }
 
     if (formData.password1 !== formData.password2) {
-      alert('Passwords do not match.');
+      setError('Passwords does not match.');
       return;
     }
 
@@ -34,12 +35,15 @@ const Register = () => {
     register({ uname: formData.uname, password: formData.password1 })
       .then(response => {
         if (response.status == 201 || response.status == 200) {
-          alert("Registered successfully");
+          setMessage("Registered successfully");
           setFormData({ uname: '', password1: '', password2: '' });
           nav('/login');
         }
       })
-      .catch(e => console.log(e.message));
+      .catch(e => {
+        console.log(e.message);
+        setError("Failed to register");
+      });
   };
 
 
