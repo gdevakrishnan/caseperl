@@ -91,8 +91,8 @@ const Navbar = () => {
                                     key={link.to}
                                     to={link.to}
                                     className={`px-4 py-2 rounded-md font-medium transition-colors ${location.pathname === link.to
-                                            ? 'text-emerald-500'
-                                            : 'text-gray-800 hover:text-gray-600 hover:bg-gray-100/50'
+                                        ? 'text-emerald-500'
+                                        : 'text-gray-800 hover:text-gray-600 hover:bg-gray-100/50'
                                         }`}
                                 >
                                     {link.label}
@@ -110,9 +110,12 @@ const Navbar = () => {
                                             <span className="text-sm font-medium text-gray-800">
                                                 {user.uname}
                                             </span>
-                                            <span className="text-xs text-gray-500 capitalize">
-                                                {user.role}
-                                            </span>
+                                            {
+                                                user.role == 'admin' &&
+                                                <span className="text-xs text-gray-500 capitalize">
+                                                    {user.role}
+                                                </span>
+                                            }
                                         </div>
                                     </div>
                                     <button
@@ -203,8 +206,8 @@ const Navbar = () => {
                                     to={link.to}
                                     onClick={closeDrawer}
                                     className={`flex items-center space-x-3 px-4 py-3 rounded-md text-base font-medium transition-colors ${location.pathname === link.to
-                                            ? 'text-emerald-500 bg-emerald-50'
-                                            : 'text-gray-800 hover:text-gray-600 hover:bg-gray-100'
+                                        ? 'text-emerald-500 bg-emerald-50'
+                                        : 'text-gray-800 hover:text-gray-600 hover:bg-gray-100'
                                         }`}
                                 >
                                     <Icon className="h-5 w-5" />

@@ -130,6 +130,7 @@ const CreateCase = () => {
                                 Case Status
                             </label>
                             <select
+                                disabled  
                                 name="status"
                                 id="status"
                                 value={formData.status}
