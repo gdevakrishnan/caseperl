@@ -222,12 +222,17 @@ DEBUG=True
    docker-compose -f docker-compose.yml up
    ```
 
-3. **Access the application**
+3. **Migrate Database**
+   ```bash
+   docker-compose exec backend bash -c "cd caseperl && python manage.py migrate"
+   ```
+
+4. **Access the application**
 
    * Frontend: [http://localhost:3000](http://localhost:3000)
    * Backend API: [http://localhost:8000](http://localhost:8000)
 
-4. **Stop containers**
+5. **Stop containers**
 
    ```bash
    docker-compose -f docker-compose.yml down
@@ -244,6 +249,8 @@ cd backend
 python -m venv venv
 venv\Scripts\activate        # Use source venv/bin/activate on macOS/Linux
 pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
 python manage.py runserver
 ```
 
